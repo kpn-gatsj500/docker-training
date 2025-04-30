@@ -1,7 +1,6 @@
-FROM debian:unstable-slim
+FROM alpine:edge
 
-RUN apt update
-RUN apt install lighttpd -y
+RUN apk add --no-cache lighttpd
 
 COPY lighttpd.conf /etc/lighttpd/lighttpd.conf
 COPY index.html /var/www/servers/www.example.org/pages/index.html

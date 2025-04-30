@@ -2,12 +2,21 @@
 
 services:
   lighttpd:
-    container_name: server
+    container_name: lighttpd
     build:
-      context: ./server/
+      context: ./lighttpd/
       dockerfile: Dockerfile
     expose:
       - 3000
+    networks:
+      - backend
+  flask:
+    container_name: flask
+    build:
+      context: ./flask/
+      dockerfile: Dockerfile
+    expose:
+      - 5000
     networks:
       - backend
   nginx:
