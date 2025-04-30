@@ -1,0 +1,29 @@
+
+
+services:
+  lighttpd:
+    container_name: server
+    build:
+      context: ./server/
+      dockerfile: Dockerfile
+    expose:
+      - 3000
+    networks:
+      - backend
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - frontend
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
