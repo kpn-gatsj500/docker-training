@@ -1,6 +1,6 @@
 FROM alpine:edge
 
-RUN apk add --no-cache python3 py3-flask
+RUN apk add --no-cache curl python3 py3-flask
 
 WORKDIR /usr/src/app
 COPY hello.py ./

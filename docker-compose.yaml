@@ -10,6 +10,12 @@ services:
       - 3000
     networks:
       - backend
+    healthcheck:
+      test: curl --fail http://localhost:3000/index.html || exit 1
+      start_period: 5s
+      interval: 5s
+      timeout: 1s
+      retries: 3
   flask:
     container_name: flask
     build:
@@ -19,6 +25,12 @@ services:
       - 5000
     networks:
       - backend
+    healthcheck:
+      test: curl --fail http://localhost:5000/ || exit 1
+      start_period: 5s
+      interval: 5s
+      timeout: 1s
+      retries: 3
   nginx:
     container_name: nginx
     build:
