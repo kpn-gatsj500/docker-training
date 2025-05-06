@@ -38,16 +38,13 @@ jobs:
             grep -E '^[A-Za-z_][A-Za-z0-9_]*=.*$' .env || (echo "Invalid .env file" && exit 1)
           fi
 
-      # Step 6: Lint NGINX configuration (if applicable)
-      - name: Lint NGINX configuration
-        run: |
-          if [ -f nginx/nginx.conf ]; then
-            nginx -t -c $(pwd)/nginx/nginx.conf
-          fi
-
-      # Step 7: Run Docker Compose services
+      # Step 6: Run Docker Compose services
       - name: Run Docker Compose services
         run: docker-compose up -d
+
+      # Step 7: Lint NGINX configuration (if applicable), this must be done in the container as the nginx.conf is not used, instead this is generated using nginx.conf.template
+      - name: Lint NGINX configuration inside the container
+        run: docker exec nginx nginx -t
 
       # Step 8: Test container availability with curl
       - name: Test container availability
