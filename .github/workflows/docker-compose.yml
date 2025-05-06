@@ -49,7 +49,6 @@ jobs:
       # Step 8: Test container availability with curl
       - name: Test container availability
         run: |
-          sleep 10
           # Test the frontend container
           curl --fail http://localhost/index.html || (echo "Frontend is unavailable" && exit 1)
 
