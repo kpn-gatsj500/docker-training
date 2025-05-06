@@ -26,6 +26,8 @@ services:
     env_file:
       - .env
     container_name: nginx
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs
     build:
       context: ./nginx/
       dockerfile: Dockerfile
