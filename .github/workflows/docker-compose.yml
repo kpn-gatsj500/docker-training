@@ -48,10 +48,10 @@ jobs:
         run: |
           sleep 10
           # Test the frontend container
-          curl --fail http://localhost:${FRONTEND_PORT} || (echo "Frontend is unavailable" && exit 1)
+          curl --fail http://localhost/index.html || (echo "Frontend is unavailable" && exit 1)
 
           # Test the backend container
-          curl --fail http://localhost:${BACKEND_PORT}/api || (echo "Backend is unavailable" && exit 1)
+          curl --fail http://localhost/api || (echo "Backend is unavailable" && exit 1)
 
       # Step 8: Tear down Docker Compose services
       - name: Tear down services
