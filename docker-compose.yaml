@@ -1,25 +1,30 @@
 
-
 services:
   lighttpd:
-    container_name: lighttpd
+    env_file:
+      - .env
+    container_name: ${LIGHTTPD_NAME}
     build:
       context: ./lighttpd/
       dockerfile: Dockerfile
     expose:
-      - 3000
+      - ${LIGHTTPD_PORT}
     networks:
       - backend
   flask:
-    container_name: flask
+    env_file:
+      - .env
+    container_name: ${FLASK_NAME}
     build:
       context: ./flask/
       dockerfile: Dockerfile
     expose:
-      - 5000
+      - ${FLASK_PORT}
     networks:
       - backend
   nginx:
+    env_file:
+      - .env
     container_name: nginx
     build:
       context: ./nginx/
