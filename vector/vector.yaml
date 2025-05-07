@@ -1,18 +1,27 @@
 sources:
-  frontend_logs:
-    type: "file"
-    include:
-      - "/var/log/frontend/*.log"
-  backend_logs:
-    type: "file"
-    include:
-      - "/var/log/backend/*.log"
   nginx_logs:
-    type: "file"
-    include:
-      - "/var/log/nginx/*.log"
+    type: "docker_logs"
+    include_containers:
+      - "nginx"
+  frontend_logs:
+    type: "docker_logs"
+    include_containers:
+      - "frontend"
+  backend_logs:
+    type: "docker_logs"
+    include_containers:
+      - "backend"
+  vector_logs:
+    type: "internal_logs"
 
 transforms:
+  remap_nginx:
+    inputs:
+      - "nginx_logs"
+    type: "remap"
+    source: |
+            structured = parse_nginx_log!(.message, "combined")
+            . = merge!(., structured)
   remap_frontend:
     inputs:
       - "frontend_logs"
@@ -27,15 +36,14 @@ transforms:
     source: |
             structured = parse_json!(.message)
             . = merge!(., structured)
-  remap_nginx:
-    inputs:
-      - "nginx_logs"
-    type: "remap"
-    source: |
-            structured = parse_nginx_log!(.message, format: "combined")
-            . = merge!(., structured)
 
 sinks:
+  emit_nginx:
+    inputs:
+      - "remap_nginx"
+    type: "console"
+    encoding:
+      codec: "json"
   emit_frontend:
     inputs:
       - "remap_frontend"
@@ -48,9 +56,14 @@ sinks:
     type: "console"
     encoding:
       codec: "json"
-  emit_nginx:
+  clicktower_nginx:
     inputs:
       - "remap_nginx"
-    type: "console"
-    encoding:
-      codec: "json"
+    endpoint: "http://clickhouse:8123"
+    database: "nginxdb"
+    table: "logs"
+    type: "clickhouse"
+
+api:
+  enabled: true
+  # address: 127.0.0.1:8686

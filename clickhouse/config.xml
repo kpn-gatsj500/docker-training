@@ -1,0 +1,27 @@
+<!--
+  NOTE: User and query level settings are set up in "users.xml" file.
+  If you have accidentally specified user-level settings here, server won't start.
+  You can either move the settings to the right place inside "users.xml" file
+   or add <skip_check_for_incorrect_settings>1</skip_check_for_incorrect_settings> here.
+-->
+<clickhouse>
+  <logger>
+    <!-- Possible levels [1]:
+
+          - none (turns off logging)
+          - fatal
+          - critical
+          - error
+          - warning
+          - notice
+          - information
+          - debug
+          - trace
+          - test (not for production usage)
+
+            [1]:
+    https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/Logger.h#L105-L114
+        -->
+    <level>warning</level>
+  </logger>
+</clickhouse>
