@@ -1,4 +1,3 @@
-
 services:
   frontend:
     env_file:
@@ -11,6 +10,9 @@ services:
       - ${FRONTEND_PORT}
     networks:
       - backend
+    # volumes:
+    #   - ./frontend/logs:/var/log/frontend
+
   backend:
     env_file:
       - .env
@@ -22,12 +24,16 @@ services:
       - ${BACKEND_PORT}
     networks:
       - backend
+    # volumes:
+    #   - ./backend/logs:/var/log/backend
+
   nginx:
     env_file:
       - .env
     container_name: nginx
     volumes:
       - ./nginx/certs:/etc/nginx/certs
+      # - ./nginx/logs:/var/log/nginx
     build:
       context: ./nginx/
       dockerfile: Dockerfile
@@ -37,6 +43,24 @@ services:
     networks:
       - frontend
       - backend
+      
+
+  vector:
+    env_file:
+      - .env
+    container_name: vector
+    build:
+      context: ./vector/
+      dockerfile: Dockerfile
+    volumes:
+      - ./vector/vector.yaml:/etc/vector/vector.yaml
+      # - ./frontend/logs:/var/log/frontend
+      # - ./backend/logs:/var/log/backend
+      # - ./nginx/logs:/var/log/nginx
+      # - ./vector/data:/var/lib/vector
+    networks:
+      - backend
+      - frontend
 
 networks:
   frontend:

@@ -1,0 +1,56 @@
+sources:
+  frontend_logs:
+    type: "file"
+    include:
+      - "/var/log/frontend/*.log"
+  backend_logs:
+    type: "file"
+    include:
+      - "/var/log/backend/*.log"
+  nginx_logs:
+    type: "file"
+    include:
+      - "/var/log/nginx/*.log"
+
+transforms:
+  remap_frontend:
+    inputs:
+      - "frontend_logs"
+    type: "remap"
+    source: |
+            structured = parse_json!(.message)
+            . = merge!(., structured)
+  remap_backend:
+    inputs:
+      - "backend_logs"
+    type: "remap"
+    source: |
+            structured = parse_json!(.message)
+            . = merge!(., structured)
+  remap_nginx:
+    inputs:
+      - "nginx_logs"
+    type: "remap"
+    source: |
+            structured = parse_nginx_log!(.message, format: "combined")
+            . = merge!(., structured)
+
+sinks:
+  emit_frontend:
+    inputs:
+      - "remap_frontend"
+    type: "console"
+    encoding:
+      codec: "json"
+  emit_backend:
+    inputs:
+      - "remap_backend"
+    type: "console"
+    encoding:
+      codec: "json"
+  emit_nginx:
+    inputs:
+      - "remap_nginx"
+    type: "console"
+    encoding:
+      codec: "json"
