@@ -21,7 +21,8 @@ COPY config.xml /etc/clickhouse-server/conf.d/
 COPY init.sh /init.sh
 RUN chmod +x /init.sh
 
-HEALTHCHECK --interval=60s --timeout=1s --retries=1 --start-interval=1s --start-period=30s CMD curl --fail http://localhost:8123/?query=SELECT%201 || exit 1
+HEALTHCHECK --interval=60s --timeout=1s --retries=1 --start-period=30s CMD \
+  curl --fail http://localhost:8123/?query=SELECT%201 && [ -f /tmp/initialized ] || exit 1
 
 # Use the custom script as the entrypoint
 ENTRYPOINT ["/init.sh"]

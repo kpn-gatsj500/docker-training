@@ -17,6 +17,9 @@ if [ -f /docker-entrypoint-initdb.d/init.sql ]; then
     ./clickhouse client --multiquery < /docker-entrypoint-initdb.d/init.sql
 fi
 
+# Create a marker file to indicate initialization is complete
+touch /tmp/initialized
+
 echo "All done, keeping server running in foreground..."
 
 # Keep the server running in the foreground
