@@ -10,9 +10,9 @@ services:
       - ${FRONTEND_PORT}
     networks:
       - backend
-    depends_on: ['vector']
-    # volumes:
-    #   - ./frontend/logs:/var/log/frontend
+    depends_on:
+      vector:
+        condition: service_healthy
 
   backend:
     env_file:
@@ -25,9 +25,9 @@ services:
       - ${BACKEND_PORT}
     networks:
       - backend
-    depends_on: ['vector']
-    # volumes:
-    #   - ./backend/logs:/var/log/backend
+    depends_on:
+      vector:
+        condition: service_healthy
 
   nginx:
     env_file:
@@ -45,7 +45,9 @@ services:
     networks:
       - frontend
       - backend
-    depends_on: ['vector']
+    depends_on:
+      vector:
+        condition: service_healthy
 
   vector:
     env_file:
@@ -54,17 +56,23 @@ services:
     build:
       context: ./vector/
       dockerfile: Dockerfile
+    expose:
+      - 8686
     volumes:
       - ./vector/vector.yaml:/etc/vector/vector.yaml
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - backend
-    depends_on: ['clickhouse']
+    depends_on:
+      clickhouse:
+        condition: service_healthy
 
   clickhouse:
     env_file:
       - .env
     container_name: clickhouse
+    expose:
+      - 8123
     volumes:
       - ./clickhouse/config.xml:/etc/clickhouse-server/conf.d/config.xml
     build:
@@ -72,6 +80,24 @@ services:
       dockerfile: Dockerfile
     networks:
       - backend
+
+  grafana: 
+    env_file:
+      - .env
+    container_name: grafana
+    # volumes:
+    #   - ./clickhouse/config.xml:/etc/clickhouse-server/conf.d/config.xml
+    build:
+      context: ./grafana/
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      clickhouse:
+        condition: service_healthy
 
 networks:
   frontend:
