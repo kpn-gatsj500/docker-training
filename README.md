@@ -71,7 +71,7 @@ This is accessible at http://localhost:3000/. The default username and password 
 
 # Remarks, limitations and suggestions for upgrading
 
- - Only nginx logging is truly collected by vector and forwarded to clickhouse. Lightppd and Vector logging has been configured but I'm not 100% sure if it works nor is it currently forwarded to clickhouse.
+ - Only nginx logging is truly collected by vector and forwarded to clickhouse. Lighttpd and Vector logging has been configured but I'm not 100% sure if it works nor is it currently forwarded to clickhouse.
  - Clickhouse is missing database initialization for logs from Lighttpd and Flask, this must be updated in the .sql initialization file before it works (or toss it with the nginx logs, your call).
  - The .env file is only selectively used by the frontend, backend and reverse proxy and misses a lot of configurable parameters. This should be streamlined and address all containers.
  - **All containers have no persistence.** This is fine for Flask, Lighttpd, Nginx and Vector, but very bad for Grafana and Clickhouse especially. This should be addressed before truly deploying it in production.
