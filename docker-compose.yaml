@@ -72,7 +72,8 @@ services:
       - .env
     container_name: clickhouse
     expose:
-      - 8123
+      - 8123  # HTTP
+      - 9000  # NATIVE
     volumes:
       - ./clickhouse/config.xml:/etc/clickhouse-server/conf.d/config.xml
     build:
@@ -85,8 +86,8 @@ services:
     env_file:
       - .env
     container_name: grafana
-    # volumes:
-    #   - ./clickhouse/config.xml:/etc/clickhouse-server/conf.d/config.xml
+    volumes:
+      - ./grafana/clickhouse-datasource.yaml:/etc/grafana/provisioning/datasources/clickhouse-datasource.yaml
     build:
       context: ./grafana/
       dockerfile: Dockerfile
